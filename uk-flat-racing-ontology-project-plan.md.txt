@@ -1,0 +1,129 @@
+# From "The Upper Limits of Biology" to a UK Flat Racing Prediction Model
+### A 6-month learning project plan — vibe coding, semantic web & ontology-based analytics
+
+Prepared for Mike | 14 August 2026 | Project: Horse Racing Analytics
+
+---
+
+## 1. Why this article is a genuinely good starting point
+
+The Works in Progress piece isn't just background reading — several of its central findings map almost directly onto the technical approach you want to learn, which is a nice coincidence worth building the project around rather than around.
+
+The single most useful connection is this: **pedigree is a graph.** Every thoroughbred's ancestry back to the General Stud Book (1791) is a directed lineage graph of sires and dams, and the article's most concrete, checkable claims — inbreeding correlating with slower, shorter, less lucrative careers; 95% of thoroughbreds descending from one stallion; ten 18th-century ancestors accounting for 80% of inbreeding in the Australian population — are all *graph* properties (path length, common ancestors, path multiplicity). That is exactly what ontologies and knowledge graphs are built to represent and query, which makes pedigree analysis the natural on-ramp into semantic web tooling rather than a side quest.
+
+A few other threads from the article translate directly into modelling features or design decisions:
+
+- **The MSTN "speed gene" (sprint vs. stamina).** You won't have access to horses' actual genotypes, but the article gives you a free proxy: horses with two C copies sprint, two T copies stay, one of each sit in between, and this shows up in the *distances they're bred and campaigned over*. A horse's distance-of-best-performance and its sire/damsire's typical progeny distance are a reasonable stand-in feature for "genetic speed/stamina type."
+- **Elite times plateaued around 1910, and Secretariat (1973) has never been matched.** This is a strong hint not to model raw finishing times as your target. Times aren't improving among the elite, so "predict the time" is close to a solved, saturated problem with little signal left. Predicting *relative* outcomes — win/place probability, finishing position, beaten lengths versus the field — is the more tractable and more useful target, and it's also what betting markets actually price.
+- **Inbreeding depresses performance.** This gives you a concrete, computable ontology-derived feature (an inbreeding/coefficient-of-relationship proxy from the pedigree graph) that has published evidence behind it — a good first "does my knowledge graph produce a useful feature" test.
+- **Docility and back-strength selection (ZFPM1, GSDMC), breed formation from three foundation sires, race-format history (Derby/St Leger shortening distances).** These are more useful as domain-modelling context — they justify *why* your ontology should represent sire lines, race distance/format, and class structure as first-class entities — than as direct numeric features.
+
+So the project has a genuine intellectual spine: use an ontology to represent the thing the article says actually matters (lineage, inbreeding, distance-type inheritance), and see how far that gets you against a baseline model that ignores pedigree structure entirely.
+
+## 2. What you're learning, and what "done" looks like
+
+Three skills, deliberately in this order because each depends on the last:
+
+1. **Vibe coding** — working with Claude conversationally to build real software (environment setup, iterative debugging, reading and correcting AI-generated code) rather than writing everything by hand. This is the vehicle for the other two, not a separate track.
+2. **Semantic web fundamentals** — RDF (triples: subject–predicate–object), OWL (ontology/class definitions), and SPARQL (the query language), plus the idea of a knowledge graph as a queryable, linked representation of a domain.
+3. **Ontology-based data analytics** — designing a small domain ontology, populating it with real data, querying it for features, and feeding those features into a predictive model, rather than treating the KG as a museum piece.
+
+**At month 6, "done" is:** a working pipeline that takes an upcoming UK Group/Listed flat race, pulls the relevant horses' data out of your knowledge graph, computes a set of ontology-derived features (pedigree, form, distance-type, going bias, class), runs them through a trained model, and outputs a ranked probability of each horse winning/placing — backtested against a season or two of historical results so you have an honest number for how good it actually is (calibration and hit-rate against favourites/market odds, not just "it ran").
+
+Given a beginner starting point and 3–5 hours a week (roughly 90–110 hours total over 6 months), the honest goal is a **credible working prototype with a documented, defensible methodology** — not a system that beats the bookmaker. That's a multi-year, well-funded industry problem (see: the entire premise of the article). Framing success around "did I build a real semantic-web-backed pipeline and can I explain and defend every step" rather than "did I get rich" will keep the project satisfying rather than demoralising.
+
+## 3. Scope decisions (so the project stays finishable)
+
+- **Race population:** UK flat racing, Group 1–3 and Listed races only (roughly 250–300 races a year), not the whole card. Top-class races are exactly what the article is about, they have the richest published data (Timeform/RP ratings, detailed pedigree coverage), and a smaller population is much more tractable to hand-curate and backtest at 3–5 hrs/week.
+- **Target:** win probability and top-3 (place) probability per horse in a race, not exact finishing time or margin.
+- **"Working model" = validated prototype**, not a live betting system. You can *compare* its output to market odds for evaluation without ever staking money on it.
+- **Ontology scope:** deliberately small — Horse, Race, Racecourse, RaceEntry/Result, Jockey, Trainer, Sire/Dam relationships, and race conditions (distance, going, class). Resist the urge to model everything; a 10-class ontology you actually finish beats a 40-class ontology you don't.
+
+## 4. Suggested tech stack (free/low-cost, beginner-appropriate)
+
+| Layer | Tool | Why |
+|---|---|---|
+| Coding environment | VS Code + Claude (Claude Code / Cowork) + Git/GitHub | Where the "vibe coding" actually happens; GitHub gives you a visible record of progress |
+| Language | Python | Best-supported ecosystem for both RDF and ML; huge amount of beginner material |
+| Ontology design | [Protégé](https://protege.stanford.edu/) (free, Stanford) | Standard, visual OWL ontology editor — see your classes and relationships as you build them |
+| Triple store / SPARQL | [Apache Jena Fuseki](https://jena.apache.org/documentation/fuseki2/) (free, runs locally) to start; `rdflib` in Python for lightweight scripting | Fuseki gives you a real SPARQL endpoint on your own machine with no account/cost; RDFLib is enough for early prototyping without even running a server |
+| Data wrangling | pandas | Turning scraped/API tables into triples before loading them |
+| Modelling | scikit-learn, then XGBoost/LightGBM | Standard, well-documented, appropriate for tabular race-feature data at this scale |
+| Dashboard/output | Streamlit | Fastest way to get a usable UI on top of a Python model, minimal extra learning |
+
+You don't need GraphDB, Neo4j, or a GNN library for this scope — they're reasonable "if I have time and appetite" upgrades in month 5, not requirements.
+
+## 5. Data sources and the £10–50/month budget
+
+- **Free foundation:** [Wikidata](https://www.wikidata.org/) already holds a surprising amount of thoroughbred pedigree as linked data (sire/dam/offspring properties, queryable via its own public SPARQL endpoint) — genuinely useful both as real data and as a working example of a public knowledge graph to learn SPARQL against before you build your own. The BHA publishes some results/ratings data, and Wikipedia has infobox pedigree data for well-known horses.
+- **Paid layer within budget:** [The Racing API](https://www.theracingapi.com/) offers UK/Irish (and some international) racecards, odds, and a large historical results archive with a metered subscription — worth checking their current plans against your £10–50/month ceiling, since exact tier pricing wasn't confirmed at the time of writing. [Racing Post+](https://www.racingpost.com/subscriptions/) is the other realistic option for richer form/ratings data, again worth checking current tier pricing directly before committing, as it wasn't published on the page I could access.
+- **Practical approach:** start free (Wikidata + whatever BHA/public results you can get), and only add a paid subscription in month 2–3 once you know exactly what fields your ontology needs and which source actually has them — don't subscribe to anything before your data model tells you what's missing.
+- Always check a site's terms of service/robots.txt before scraping; prefer an official API or bulk download where one exists.
+
+## 6. Month-by-month plan
+
+### Month 1 — Foundations: vibe coding, domain literacy, first tiny dataset
+- Set up Python, VS Code, Git/GitHub, and your Claude-assisted workflow; get comfortable asking Claude to write, explain, and fix small scripts rather than writing everything yourself.
+- Learn the domain structure you're modelling: UK race classes (Group 1–3, Listed, Class 1–7), going descriptions, distances (furlongs), the Flat season/turf calendar, what a "form figure" line means.
+- Hand-build a tiny seed dataset: ~20–30 recent Group races with results, by hand or simple scraping, just to have something real to point early scripts at.
+- **Deliverable:** a GitHub repo with your seed dataset and a couple of working Python scripts that load and summarise it (e.g., "list this year's Group 1 winners").
+- **Checkpoint:** can you explain, in your own words, what a Group 1 race is and why it's the right population for this project?
+
+### Month 2 — Semantic web fundamentals: RDF, OWL, SPARQL
+- Work through an RDF/SPARQL beginner tutorial (Jena's own tutorials are a good free option) and practice queries against Wikidata's public SPARQL endpoint using real horses/pedigree.
+- Install Protégé; design **version 1 of your ontology**: Horse, Race, Racecourse, RaceEntry, Jockey, Trainer, and `hasSire`/`hasDam` relationships between Horses. Keep it to 6–10 classes.
+- Load your month-1 seed dataset into Fuseki (or RDFLib) as triples using this ontology; write and run 5–10 SPARQL queries against it by hand (e.g., "all horses sired by X," "all races at a given course over 10+ furlongs").
+- **Deliverable:** a running local SPARQL endpoint with your seed data loaded and a documented ontology diagram (Protégé can export one).
+- **Checkpoint:** you can write a SPARQL query from scratch to answer a new question about your data without copying a template.
+
+### Month 3 — Scale up the knowledge graph
+- Build a repeatable ETL pipeline (vibe-coded with Claude): pull a season or two of Group/Listed race results and pedigree data from your chosen sources, clean it in pandas, convert to triples, load into your triple store. This is the month where the paid data source (if you take one) earns its keep.
+- Extend the ontology as real data forces the issue: race conditions (distance, going, class) as properties of Race; add basic Trainer/Jockey entities with a form history.
+- Write your first "interesting" SPARQL queries directly inspired by the article: compute a simple inbreeding/common-ancestor proxy from the sire/dam graph; identify each horse's best-performance distance band as a stamina/speed-type proxy.
+- **Deliverable:** a knowledge graph covering ~1–2 seasons of top-class UK flat racing, with pedigree depth of at least 3–4 generations for the horses in it.
+- **Checkpoint:** you can pull a pedigree-based feature (e.g., an inbreeding proxy) straight out of SPARQL for any horse in the graph.
+
+### Month 4 — Feature engineering and a first baseline model
+- Define your prediction target clearly: win / top-3 for each horse in a race.
+- Use SPARQL queries to extract a feature table (one row per horse-race) covering: pedigree/inbreeding proxy, distance-type proxy, recent form, class of race, going, course, jockey/trainer form.
+- Train a simple baseline model (logistic regression, then gradient boosting) in scikit-learn; do a first naive train/test split and look at basic metrics (accuracy isn't very meaningful for horse racing — look at log-loss and calibration instead).
+- **Deliverable:** a first trained model with an honest, if unimpressive, evaluation write-up — what worked, what didn't, what's clearly missing.
+- **Checkpoint:** you understand *why* accuracy is a poor metric for a field with 8–20 runners and one winner, and you're using log-loss/calibration instead.
+
+### Month 5 — Proper validation and refinement
+- Switch to realistic backtesting: walk-forward validation (train on earlier races, test on strictly later ones) rather than a random split, since a random split leaks future form into the past.
+- Compare your model's implied probabilities against actual starting prices/odds where available — this is your real benchmark, not a hand-picked "accuracy" number.
+- Iterate on features and, if you have appetite and time left, try one graph-native enrichment (e.g., a simple sire-line performance aggregate, or a basic graph embedding) purely as a learning exercise in what ontology-based analytics can add beyond flat tabular features.
+- **Deliverable:** a backtested model over a full season (or more) with a clear before/after comparison showing what pedigree/ontology-derived features actually contributed versus a form-only baseline.
+- **Checkpoint:** you can say, with evidence, whether the ontology/pedigree features helped, hurt, or made no measurable difference — a genuinely useful and honest result either way.
+
+### Month 6 — Productise, document, and present
+- Wrap the pipeline in a small Streamlit app: pick an upcoming Group/Listed race, see ranked win/place probabilities pulled live from your knowledge graph and model.
+- Write up the project: ontology diagram, pipeline architecture, what the article's biology predicted vs. what your data showed, model performance and honest limitations, what you'd do with another 6 months.
+- Optional stretch: expose your own SPARQL endpoint publicly (read-only) as a small "linked open data" contribution, in the spirit of what Wikidata does for pedigree.
+- **Deliverable:** a working end-to-end prototype plus a write-up you could show someone else and defend every claim in.
+- **Checkpoint (project success criteria):** ontology with real, sourced data behind it; a documented pipeline from raw data to prediction; a backtested model with an honest performance number against a market/form baseline; and a short write-up you could hand to someone technical without embarrassment.
+
+## 7. A first sketch of the ontology (starting point, not final)
+
+Classes: `Horse`, `Race`, `RaceEntry` (a horse's participation in one race — this is where result, position, beaten-distance live), `Racecourse`, `Jockey`, `Trainer`, `Sire`/`Dam` (both just `Horse` with a role).
+
+Key relationships: `Horse —hasSire→ Horse`, `Horse —hasDam→ Horse`, `RaceEntry —ofHorse→ Horse`, `RaceEntry —inRace→ Race`, `RaceEntry —riddenBy→ Jockey`, `RaceEntry —trainedBy→ Trainer`, `Race —atCourse→ Racecourse`, `Race —hasDistance/hasGoing/hasClass→` (literal properties).
+
+This is intentionally small enough to build in Protégé in an afternoon and extend as month 3's real data demands it — better to start too simple and grow it than to over-design up front.
+
+## 8. Risks to watch for, given your time budget
+
+- **Scraping/ToS friction eating your hours.** If a data source blocks you or changes its page structure, don't sink a whole week into it — switch source or fall back to Wikidata/manual curation for that month and keep moving.
+- **Ontology perfectionism.** It's tempting to keep refining the ontology instead of loading real data into it. Give yourself a hard rule: no more than 2 sessions of pure ontology design before you must load real triples against it.
+- **Treating the model as a betting system.** Keep the framing as "backtested research prototype" throughout — it keeps the success criteria honest and keeps you from chasing a number that a 6-month beginner project realistically can't hit.
+- **Small race population = small backtest sample.** ~250–300 races/year means your test set is modest. Be appropriately cautious about any result that looks *too* good — check for leakage (e.g., using post-race information as a feature) before believing it.
+
+## 9. If you finish early
+
+Extend to Class 1–2 handicaps for a bigger sample size, add a proper graph embedding (node2vec or a small GNN) on the sire-line graph, or add a second discipline (e.g., UK National Hunt) as a comparison case where the article's stamina-type reasoning applies differently.
+
+---
+
+*Source consulted for data/tooling options: [The Racing API](https://www.theracingapi.com/), [Racing Post+ subscriptions](https://www.racingpost.com/subscriptions/), [Apache Jena Fuseki documentation](https://jena.apache.org/documentation/fuseki2/), [Wikidata](https://www.wikidata.org/). Exact current subscription pricing for The Racing API and Racing Post+ was not confirmed from their pages directly — check before budgeting.*
+
