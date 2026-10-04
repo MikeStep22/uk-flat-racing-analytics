@@ -1,0 +1,53 @@
+29 completed Group 1 races for 2026 to date (from group1_results_2026.csv)
+
+All results:
+  2026-05-02  2000 Guineas                           Bow Echo          (   9/2)  — not favourite
+  2026-05-03  1000 Guineas                           True Love         (   5/1)  — not favourite
+  2026-05-16  Lockinge Stakes                        Notable Speech    (  2/1F)  — FAVOURITE
+  2026-06-05  Oaks Stakes                            Thundering On     (   5/1)  — not favourite
+  2026-06-06  Coronation Cup                         Bay City Roller   (  17/2)  — not favourite
+  2026-06-06  Derby Stakes                           Christmas Day     (   7/1)  — not favourite
+  2026-06-16  Queen Anne Stakes                      Ten Bob Tony      (  50/1)  — not favourite
+  2026-06-16  King Charles III Stakes                Mission Central   (  14/1)  — not favourite
+  2026-06-16  St James's Palace Stakes               Bow Echo          (  5/6F)  — FAVOURITE
+  2026-06-17  Prince of Wales's Stakes               Ombudsman         (11/10F)  — FAVOURITE
+  2026-06-18  Gold Cup                               Scandinavia       ( 11/8F)  — FAVOURITE
+  2026-06-19  Commonwealth Cup                       Venetian Sun      ( 11/8F)  — FAVOURITE
+  2026-06-19  Coronation Stakes                      Precise           ( 8/13F)  — FAVOURITE
+  2026-06-20  Queen Elizabeth II Jubilee Stakes      Almeraq           (  25/1)  — not favourite
+  2026-07-04  Eclipse Stakes                         Constitution River ( 8/11F)  — FAVOURITE
+  2026-07-10  Falmouth Stakes                        Blue Bolt         ( 85/40)  — not favourite
+  2026-07-11  July Cup                               Comanche Brave    (  11/1)  — not favourite
+  2026-07-25  King George VI & Queen Elizabeth Stakes Kalpana           (  13/2)  — not favourite
+  2026-07-28  Goodwood Cup                           Scandinavia       (  6/5F)  — FAVOURITE
+  2026-07-29  Sussex Stakes                          Bow Echo          (10/11F)  — FAVOURITE
+  2026-07-30  Nassau Stakes                          Diamond Necklace  (  4/6F)  — FAVOURITE
+  2026-08-19  International Stakes                   Item              (  10/1)  — not favourite
+  2026-08-20  Yorkshire Oaks                         Kalpana           (10/11F)  — FAVOURITE
+  2026-08-21  Nunthorpe Stakes                       Bacio             (   3/1)  — FAVOURITE
+  2026-08-22  City of York Stakes                    Notable Speech    (   9/4)  — FAVOURITE
+  2026-09-05  Sprint Cup                             Almeraq           (  9/4F)  — FAVOURITE
+  2026-09-12  St Leger Stakes                        Highwayman        (  11/1)  — not favourite
+  2026-09-26  Cheveley Park Stakes                   Sun Goddess       (  5/6F)  — FAVOURITE
+  2026-09-26  Middle Park Stakes                     Orthodox          (   7/2)  — not favourite
+
+Winners that started as favourite (15 of 29):
+  Notable Speech won the Lockinge Stakes at 2/1F
+  Bow Echo won the St James's Palace Stakes at 5/6F
+  Ombudsman won the Prince of Wales's Stakes at 11/10F
+  Scandinavia won the Gold Cup at 11/8F
+  Venetian Sun won the Commonwealth Cup at 11/8F
+  Precise won the Coronation Stakes at 8/13F
+  Constitution River won the Eclipse Stakes at 8/11F
+  Scandinavia won the Goodwood Cup at 6/5F
+  Bow Echo won the Sussex Stakes at 10/11F
+  Diamond Necklace won the Nassau Stakes at 4/6F
+  Kalpana won the Yorkshire Oaks at 10/11F
+  Bacio won the Nunthorpe Stakes at 3/1
+  Notable Speech won the City of York Stakes at 9/4
+  Almeraq won the Sprint Cup at 9/4F
+  Sun Goddess won the Cheveley Park Stakes at 5/6F
+
+Favourites have won 52% of this season's Group 1 races so far (15/29).
+
+--- snapshot taken 2026-10-04, end of Month 1 ---
